@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Kwiki::Plugin '-Base';
 use Kwiki::Installer '-Base';
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 const class_id => 'shell_blocks';
 const class_title => 'Shell Blocks';
@@ -19,9 +19,9 @@ use base 'Spoon::Formatter::WaflBlock';
 
 sub to_html {
     return join '',
-      qq{<table class="shell_mode"><tr><td><pre>\n},
-      (map $self->render_line($_), split(/\n/, $self->block_text)),
-      qq{</pre></td></tr></table>\n};
+      qq{<pre class="shell_mode">},
+      join("\n", map $self->render_line($_), split(/\n/, $self->block_text)),
+      qq{</pre>};
 }
 
 sub render_line {
@@ -36,9 +36,9 @@ sub render_line {
         $source = "<span class='output'>$source</span>";
     }
 
-    $source =~ s{(\s#\s.+)}{<span class='comment'>$1</span>};
+    $source =~ s{((?:\s|^)#\s.+)}{<span class='comment'>$1</span>};
 
-    return "$spaces$source\n";
+    return $spaces.$source;
 }
 
 1;
@@ -79,17 +79,13 @@ See L<http://www.perl.com/perl/misc/Artistic.html>
 
 =cut
 __css/shell_blocks.css__
-table.shell_mode pre {
+pre.shell_mode {
     padding-left: 0px;
     padding-top: 0px;
     padding-bottom: 0px;
     margin-top: 0px;
     margin-bottom: 0px;
     background-color: #FFF;
-}
-
-table.shell_mode td {
-    border: 0;
 }
 
 .prompt { font-weight: bold; color: #C44800; }
